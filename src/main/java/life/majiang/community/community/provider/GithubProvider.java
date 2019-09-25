@@ -26,14 +26,14 @@ public class GithubProvider {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             String string=response.body().string();
-            System.out.println(string);
-            return string;
-        } catch (IOException e) {
+            String token = string.split("&")[0].split("=")[1];
+            return token;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    public GithubUser githubUser(String accessToken) throws IOException {
+    /*public GithubUser githubUser(String accessToken) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request=new Request.Builder()
                 .url("https://api.github.com/user?access_token="+accessToken)
@@ -44,6 +44,21 @@ public class GithubProvider {
             GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
             return githubUser;
         }catch (IOException e){
+        }
+        return null;
+    }*/
+    public GithubUser getUser(String accessToken){
+        OkHttpClient client=new OkHttpClient();
+        Request request=new Request.Builder()
+                .url("https://api.github.com/user?access_token="+accessToken)
+                .build();
+        try {
+            Response response=client.newCall(request).execute();
+            String string=response.body().string();
+            //将JSON的string自动解析成类对象
+            GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
+            return githubUser;
+        } catch (IOException e) {
         }
         return null;
     }
